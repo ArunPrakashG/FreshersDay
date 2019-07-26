@@ -1,7 +1,8 @@
-﻿using MahApps.Metro.Controls;
+using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -9,8 +10,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Threading;
 
-namespace FreshersDay
-{
+namespace FreshersDay {
 	//public class ButtonInfo
 	//{
 	//	public Button Button { get; set; }
@@ -25,17 +25,23 @@ namespace FreshersDay
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml
 	/// </summary>
-	public partial class MainWindow : MetroWindow
-	{
-		public MainWindow()
-		{
+	public partial class MainWindow : MetroWindow {
+		public MainWindow() {
 			InitializeComponent();
 		}
 
 		private Config TaskConfig = new Config();
+		private List<string> TaskCollectionList = new List<string>() {
+			"വേപ്പില കഴിക്കുക",
+			"ബെല്ലി ഡാൻസ്",
+			"ടിക് ടോക് അപാരതാ",
+			"പ്രൊപോസൽ ചെയ്യുക",
+			"പാവയ്ക്കാ ജൂസ് കുടിക്കുക",
+			"പുളി കഴിക്കുക (മുഖത്തെ ഏക്സ്പ്രെഷൻ മാറാതെ)",
+			"കുഞ്ഞിനെ ഉറക്കുക"
+		};
 
-		private void InitEvents()
-		{
+		private void InitEvents() {
 			TaskConfig = TaskConfig.LoadConfig();
 			LoadButtons();
 
@@ -65,104 +71,88 @@ namespace FreshersDay
 			//}
 		}
 
-		private void LoadButtons()
-		{
-			foreach (Button bttn in FindVisualChildren<Button>(grid))
-			{
-				foreach (ButtonInfo task in TaskConfig.TaskList)
-				{
-					if (task.ButtonName.Equals(bttn.Content))
-					{
+		private void LoadButtons() {
+			foreach (Button bttn in FindVisualChildren<Button>(grid)) {
+				foreach (ButtonInfo task in TaskConfig.TaskList) {
+					if (bttn.Name.Equals(task.ButtonId, StringComparison.OrdinalIgnoreCase)) {
 						task.Button = bttn;
-						task.Button.Click += Button_Click;
+						bttn.Background = task.IsGirlsTask ? Brushes.Pink : Brushes.DeepSkyBlue;
+						bttn.Click += Button_Click;
 						task.EventRegistered = true;
+						task.IsDisabled = false;
+						bttn.Content = task.ButtonName;
 					}
 				}
 			}
 
 			CoreInvoke(() => { lastTaskLabel.Content = $"Click on the respective button!"; });
 		}
-		
-		public static void ScheduleTask(Action action, TimeSpan delay)
-		{
-			if (action == null)
-			{
+
+		public static void ScheduleTask(Action action, TimeSpan delay) {
+			if (action == null) {
 				return;
 			}
 
 			Timer TaskSchedulerTimer = null;
 
-			TaskSchedulerTimer = new Timer(e =>
-			{
+			TaskSchedulerTimer = new Timer(e => {
 				InBackground(action);
 
-				if (TaskSchedulerTimer != null)
-				{
+				if (TaskSchedulerTimer != null) {
 					TaskSchedulerTimer.Dispose();
 					TaskSchedulerTimer = null;
 				}
 			}, null, delay, delay);
 		}
 
-		private void PlaySound(string filePath)
-		{
-			if (string.IsNullOrEmpty(filePath) || string.IsNullOrWhiteSpace(filePath))
-			{
+		private void PlaySound(string filePath) {
+			if (string.IsNullOrEmpty(filePath) || string.IsNullOrWhiteSpace(filePath)) {
 				return;
 			}
 
-			ScheduleTask(() =>
-			{
+			if (!File.Exists(filePath)) {
+				return;
+			}
+
+			ScheduleTask(() => {
 				MediaPlayer Player = new MediaPlayer();
 				Player.Open(new Uri(filePath));
 				Player.Play();
 			}, TimeSpan.FromSeconds(2));
 		}
 
-		private static IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj) where T : DependencyObject
-		{
-			if (depObj != null)
-			{
-				for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
-				{
+		private static IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj) where T : DependencyObject {
+			if (depObj != null) {
+				for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++) {
 					DependencyObject child = VisualTreeHelper.GetChild(depObj, i);
-					if (child != null && child is T)
-					{
+					if (child != null && child is T) {
 						yield return (T) child;
 					}
 
-					foreach (T childOfChild in FindVisualChildren<T>(child))
-					{
+					foreach (T childOfChild in FindVisualChildren<T>(child)) {
 						yield return childOfChild;
 					}
 				}
 			}
 		}
 
-		public static void InBackground(Action action, bool longRunning = false)
-		{
-			if (action == null)
-			{
+		public static void InBackground(Action action, bool longRunning = false) {
+			if (action == null) {
 				return;
 			}
 
 			TaskCreationOptions options = TaskCreationOptions.DenyChildAttach;
 
-			if (longRunning)
-			{
+			if (longRunning) {
 				options |= TaskCreationOptions.LongRunning | TaskCreationOptions.PreferFairness;
 			}
 
 			Task.Factory.StartNew(action, CancellationToken.None, options, TaskScheduler.Default);
 		}
 
-		private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
-		{
-			InitEvents();
-		}
+		private void MainWindow_OnLoaded(object sender, RoutedEventArgs e) => InitEvents();
 
-		private ButtonInfo GetTaskInfo(Button clickedButton)
-		{
+		private ButtonInfo GetTaskInfo(Button clickedButton) {
 			//if (clickedButton == null)
 			//{
 			//	return (task1, new ButtonInfo()
@@ -196,37 +186,31 @@ namespace FreshersDay
 			//	TaskTitle = "Your task is..."
 			//}, 0);
 
-			foreach (ButtonInfo task in TaskConfig.TaskList)
-			{
-				if (task.Button == clickedButton)
-				{
+			foreach (ButtonInfo task in TaskConfig.TaskList) {
+				if (task.Button == clickedButton) {
 					return task;
 				}
 			}
 
-			return new ButtonInfo()
-			{
+			return new ButtonInfo() {
 				Button = task1,
 				IsDisabled = false,
 				EventRegistered = false,
 				AudioFilePath = $"AudioFiles/{task1.Content}.wav",
-				IsGirlsTask = false,
-				TaskMessage = SelectTask(task1),
+				IsGirlsTask = Convert.ToInt32(task1.Content) > 0 && Convert.ToInt32(task1.Content) <= 18,
+				TaskMessage = SelectRandomTask(),
 				TaskTitle = "Your task is..."
 			};
 		}
 
-		private async void Button_Click(object sender, RoutedEventArgs e)
-		{
+		private async void Button_Click(object sender, RoutedEventArgs e) {
 			Button clickedButton = (Button) sender;
 
-			if (clickedButton == null)
-			{
+			if (clickedButton == null) {
 				return;
 			}
 
-			clickedButton.Dispatcher.Invoke(() =>
-			{
+			clickedButton.Dispatcher.Invoke(() => {
 				clickedButton.Background = new SolidColorBrush(Colors.Gray);
 				clickedButton.IsEnabled = false;
 				clickedButton.Click -= Button_Click;
@@ -242,85 +226,38 @@ namespace FreshersDay
 			await ShowMessageDialog(buttonInfo.TaskTitle, buttonInfo.TaskMessage, MessageDialogStyle.Affirmative).ConfigureAwait(false);
 		}
 
-		private string SelectTask(Button clickedButton)
-		{
-			switch (clickedButton.Content)
-			{
-				case "1":
-					{
-						return "വേപ്പില കഴിക്കുക";
-					}
-
-				case "2":
-					{
-						return "ബെല്ലി ഡാൻസ്";
-					}
-
-				case "3":
-					{
-						return "ടിക് ടോക് അപാരതാ";
-					}
-
-				case "4":
-					{
-						return "പ്രൊപോസൽ ചെയ്യുക";
-					}
-
-				case "5":
-					{
-						return "പാവയ്ക്കാ ജൂസ് കുടിക്കുക";
-					}
-
-				case "6":
-					{
-						return "പുളി കഴിക്കുക (മുഖത്തെ ഏക്സ്പ്രെഷൻ മാറാതെ)";
-					}
-
-				case "7":
-					{
-						return "കുഞ്ഞിനെ ഉറക്കുക";
-					}
-
-				default:
-					{
-						return "വേപ്പില കഴിക്കുക";
-					}
-			}
+		private string SelectRandomTask() {
+			Random random = new Random();
+			int index = random.Next(TaskCollectionList.Count);
+			return TaskCollectionList[index];
 		}
 
-		public void CoreInvoke(Action action, Dispatcher dispatcher = null)
-		{
-			if (dispatcher == null)
-			{
+		public void CoreInvoke(Action action, Dispatcher dispatcher = null) {
+			if (dispatcher == null) {
 				dispatcher = Dispatcher;
 			}
 
 			dispatcher.Invoke(action);
 		}
 
-		public async Task<MessageDialogResult> ShowMessageDialog(string title = "Your task is...", string message = "ERROR: Unknown task", MessageDialogStyle style = MessageDialogStyle.Affirmative)
-		{
+		public async Task<MessageDialogResult> ShowMessageDialog(string title = "Your task is...", string message = "ERROR: Unknown task", MessageDialogStyle style = MessageDialogStyle.Affirmative) {
 			MessageDialogResult Result = new MessageDialogResult();
 
-			await Dispatcher.Invoke(async () =>
-			{
+			await Dispatcher.Invoke(async () => {
 				Result = await this.ShowMessageAsync(title, message, style).ConfigureAwait(false);
 			}).ConfigureAwait(false);
 			return Result;
 		}
 
-		public async Task<ProgressDialogController> ShowProgressDialog(string title = "Please wait...", string message = "ERROR: Unknown task", bool cancelable = false)
-		{
+		public async Task<ProgressDialogController> ShowProgressDialog(string title = "Please wait...", string message = "ERROR: Unknown task", bool cancelable = false) {
 			ProgressDialogController Controller = null;
-			await Dispatcher.Invoke(async () =>
-			{
+			await Dispatcher.Invoke(async () => {
 				Controller = await this.ShowProgressAsync(title, message, cancelable).ConfigureAwait(false);
 			}).ConfigureAwait(false);
 			return Controller;
 		}
 
-		private void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-		{
+		private void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
 			TaskConfig.SaveConfig(TaskConfig);
 		}
 	}

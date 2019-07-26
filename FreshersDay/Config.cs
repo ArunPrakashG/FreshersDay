@@ -1,20 +1,14 @@
-﻿using System;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Controls;
-using ControlzEx.Native;
-using Newtonsoft.Json;
 
-namespace FreshersDay
-{
-	public class ButtonInfo
-	{
+namespace FreshersDay {
+	public class ButtonInfo {
 		[JsonProperty] public string ButtonName { get; set; } = "1";
-		public Button Button { get; set; }
+		[JsonIgnore] public Button Button { get; set; }
 		[JsonProperty] public bool IsDisabled { get; set; } = false;
+		[JsonProperty] public string ButtonId { get; set; } = "task1";
 		[JsonProperty] public bool EventRegistered { get; set; } = false;
 		[JsonProperty] public string TaskTitle { get; set; } = "Here is your task...";
 		[JsonProperty] public string TaskMessage { get; set; } = "വേപ്പില കഴിക്കുക";
@@ -22,20 +16,16 @@ namespace FreshersDay
 		[JsonProperty] public string AudioFilePath { get; set; } = @"AudioFiles/1.wav";
 	}
 
-	public class Config
-	{
+	public class Config {
 		[JsonProperty]
 		public List<ButtonInfo> TaskList { get; set; } = new List<ButtonInfo>();
 
-		public Config SaveConfig(Config config)
-		{
+		public Config SaveConfig(Config config) {
 			JsonSerializer serializer = new JsonSerializer();
 			JsonConvert.SerializeObject(config, Formatting.Indented);
 			string pathName = @"Config.json";
-			using (StreamWriter sw = new StreamWriter(pathName, false))
-			{
-				using (JsonWriter writer = new JsonTextWriter(sw))
-				{
+			using (StreamWriter sw = new StreamWriter(pathName, false)) {
+				using (JsonWriter writer = new JsonTextWriter(sw)) {
 					writer.Formatting = Formatting.Indented;
 					serializer.Serialize(writer, config);
 					sw.Dispose();
@@ -44,18 +34,14 @@ namespace FreshersDay
 			}
 		}
 
-		public Config LoadConfig()
-		{
-			if (!File.Exists(@"Config.json"))
-			{
+		public Config LoadConfig() {
+			if (!File.Exists(@"Config.json")) {
 				GenerateDefaultConfig();
 			}
 
 			string JSON;
-			using (FileStream Stream = new FileStream(@"Config.json", FileMode.Open, FileAccess.Read))
-			{
-				using (StreamReader ReadSettings = new StreamReader(Stream))
-				{
+			using (FileStream Stream = new FileStream(@"Config.json", FileMode.Open, FileAccess.Read)) {
+				using (StreamReader ReadSettings = new StreamReader(Stream)) {
 					JSON = ReadSettings.ReadToEnd();
 				}
 			}
@@ -64,26 +50,24 @@ namespace FreshersDay
 			return returnConfig;
 		}
 
-		public bool GenerateDefaultConfig()
-		{
-			if (File.Exists(@"Config.json"))
-			{
+		public bool GenerateDefaultConfig() {
+			if (File.Exists(@"Config.json")) {
 				return true;
 			}
 
 			Config Config = new Config();
-			int i = 0;
+			int i = 1;
 
-			while (true)
-			{
-				if(i > 36)
-				{
+			while (true) {
+				if (i >= 37) {
 					break;
 				}
 
-				Config.TaskList.Add(new ButtonInfo()
-				{
-					ButtonName = i.ToString()
+				Config.TaskList.Add(new ButtonInfo() {
+					ButtonName = i.ToString(),
+					ButtonId = $"task{i}",
+					AudioFilePath = $@"AudioFiles/{i}.wav",
+					IsGirlsTask = i > 0 && i <= 18
 				});
 				i++;
 			}
@@ -92,8 +76,7 @@ namespace FreshersDay
 			JsonConvert.SerializeObject(Config, Formatting.Indented);
 			string pathName = @"Config.json";
 			using (StreamWriter sw = new StreamWriter(pathName, false))
-			using (JsonWriter writer = new JsonTextWriter(sw))
-			{
+			using (JsonWriter writer = new JsonTextWriter(sw)) {
 				writer.Formatting = Formatting.Indented;
 				serializer.Serialize(writer, Config);
 				sw.Dispose();
