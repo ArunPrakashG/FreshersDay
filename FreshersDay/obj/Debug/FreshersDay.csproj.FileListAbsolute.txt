@@ -23,3 +23,7 @@ D:\GitHub-Projects\FreshersDay\FreshersDay\obj\Debug\FreshersDay.exe
 D:\GitHub-Projects\FreshersDay\FreshersDay\obj\Debug\FreshersDay.pdb
 D:\GitHub-Projects\FreshersDay\FreshersDay\bin\Debug\Newtonsoft.Json.dll
 D:\GitHub-Projects\FreshersDay\FreshersDay\bin\Debug\Newtonsoft.Json.xml
+D:\GitHub-Projects\FreshersDay\FreshersDay\bin\Debug\AudioFiles\tasknotification.wav
+D:\GitHub-Projects\FreshersDay\FreshersDay\obj\Debug\FreshersDay_Content.g.cs
+D:\GitHub-Projects\FreshersDay\FreshersDay\bin\Debug\WindowsInput.dll
+D:\GitHub-Projects\FreshersDay\FreshersDay\bin\Debug\WindowsInput.xml

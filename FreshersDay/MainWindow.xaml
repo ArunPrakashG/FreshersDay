@@ -11,50 +11,71 @@
         mc:Ignorable="d"
         Loaded="MainWindow_OnLoaded"
         GlowBrush="Black"
-        Title="BCA Freshers day" Height="450" Width="800" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Closing="MetroWindow_Closing">
+        Title="BCA Freshers day"
+    Height="581"
+    Width="868"
+    ResizeMode="NoResize"
+    WindowStartupLocation="CenterScreen"
+    Closing="MetroWindow_Closing">
 	<Grid Name="grid">
-		<Button Name="task1" Content="1" Margin="16,58,693,323" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper"/>
-		<Label Name="lastTaskLabel" Content="Previous task" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Margin="10,388,21,0" VerticalAlignment="Top" FontFamily="Tekton Pro" FontSize="16" Height="31" />
-		<Button x:Name="task2" Content="2" Margin="116,58,593,323" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper"/>
-		<Button x:Name="task3" Content="3" Margin="221,58,488,323" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper"/>
-		<Button x:Name="task4" Content="4" Margin="489,58,220,323" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper"/>
-		<Button x:Name="task5" Content="5" Margin="594,58,115,323" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper"/>
-		<Button x:Name="task6" Content="6" Margin="694,58,15,323" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper"/>
-		<Button x:Name="task7" Content="7" Margin="16,110,693,271" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper"/>
-		<Button x:Name="task8" Content="8" Margin="116,110,593,271" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper"/>
-		<Button x:Name="task9" Content="9" Margin="221,110,488,271" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper"/>
-		<Button x:Name="task10" Content="10" Margin="489,110,220,271" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper"/>
-		<Button x:Name="task11" Content="11" Margin="594,110,115,271" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper"/>
-		<Button x:Name="task12" Content="12" Margin="694,110,15,271" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper"/>
-		<Button x:Name="task13" Content="13" Margin="16,160,693,221" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper"/>
-		<Button x:Name="task14" Content="14" Margin="116,160,593,221" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper"/>
-		<Button x:Name="task15" Content="15" Margin="221,160,488,221" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper"/>
-		<Button x:Name="task16" Content="16" Margin="489,160,220,221" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper"/>
-		<Button x:Name="task17" Content="17" Margin="594,160,115,221" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper"/>
-		<Button x:Name="task18" Content="18" Margin="694,160,15,221" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper"/>
-		<Button x:Name="task19" Content="19" Margin="16,211,693,170" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper"/>
-		<Button x:Name="task20" Content="20" Margin="116,211,593,170" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper"/>
-		<Button x:Name="task21" Content="21" Margin="221,210,488,171" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper"/>
-		<Button x:Name="task22" Content="22" Margin="489,211,220,171" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper"/>
-		<Button x:Name="task23" Content="23" Margin="594,211,115,171" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper"/>
-		<Button x:Name="task24" Content="24" Margin="694,211,15,171" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper"/>
-		<Button x:Name="task25" Content="25" Margin="16,265,693,116" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper"/>
-		<Button x:Name="task26" Content="26" Margin="116,265,593,116" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper"/>
-		<Button x:Name="task27" Content="27" Margin="221,265,488,116" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper"/>
-		<Button x:Name="task28" Content="28" Margin="489,265,220,116" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper"/>
-		<Button x:Name="task29" Content="29" Margin="594,265,115,116" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper"/>
-		<Button x:Name="task30" Content="30" Margin="694,265,15,116" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper"/>
-		<Button x:Name="task31" Content="31" Margin="16,318,693,63" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper"/>
-		<Button x:Name="task32" Content="32" Margin="116,318,593,63" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper"/>
-		<Button x:Name="task33" Content="33" Margin="221,318,488,63" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper"/>
-		<Button x:Name="task34" Content="34" Margin="489,318,220,63" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper"/>
-		<Button x:Name="task35" Content="35" Margin="594,318,115,63" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper"/>
-		<Button x:Name="task36" Content="36" Margin="694,318,15,63" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper"/>
-		<Label Content="BCA 🖥compriderzzz🌍" HorizontalAlignment="Left" Margin="195,-10,0,0" VerticalAlignment="Top" FontFamily="Kozuka Gothic Pr6N B" FontSize="36" Height="67" Width="404" Opacity="0.15"/>
-		<Label Content="Previous task:" HorizontalAlignment="Left" Margin="12,360,0,0" VerticalAlignment="Top" FontSize="10"/>
-		<Rectangle Fill="Pink" HorizontalAlignment="Left" Height="17" Margin="16,7,0,0" Stroke="Black" VerticalAlignment="Top" Width="25"/>
-		<Label Content="[G] for girls" HorizontalAlignment="Left" Margin="47,2,0,0" VerticalAlignment="Top" Height="27"/>
-		<Rectangle Fill="DeepSkyBlue" HorizontalAlignment="Left" Height="17" Margin="16,31,0,0" Stroke="Black" VerticalAlignment="Top" Width="25"/>
-		<Label Content="[B] for boys" HorizontalAlignment="Left" Margin="47,26,0,0" VerticalAlignment="Top"/>
+		<Label Content="Tasks remaining" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Margin="0,276,0,0" VerticalAlignment="Top"/>
+		<Label x:Name="remainingLabel" Content="36/36" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Margin="0,250,0,0" VerticalAlignment="Top" FontSize="15"/>
+		<Label x:Name="lastTaskLabel" Content="Previous task" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Margin="13,510,18,0" VerticalAlignment="Top" FontFamily="Tekton Pro" FontSize="16" Height="31" />
+		<Label Content="BCA 🖥compriderzzz🌍" HorizontalAlignment="Center" HorizontalContentAlignment="Center" Margin="231,11,227,0" VerticalAlignment="Top" FontFamily="Kozuka Gothic Pro M" FontSize="36" Height="67" Width="404" Opacity="0.15"/>
+		<Label Content="Previous task:" HorizontalAlignment="Left" Margin="13,481,0,0" VerticalAlignment="Top" FontSize="10"/>
+		<Rectangle Fill="Pink" HorizontalAlignment="Left" Height="17" Margin="15,31,0,0" Stroke="Black" VerticalAlignment="Top" Width="25"/>
+		<Label Content="[G] for girls" HorizontalAlignment="Left" Margin="46,26,0,0" VerticalAlignment="Top" Height="27"/>
+		<Rectangle Fill="DeepSkyBlue" HorizontalAlignment="Left" Height="17" Margin="15,55,0,0" Stroke="Black" VerticalAlignment="Top" Width="25"/>
+		<Label Content="[B] for boys" HorizontalAlignment="Left" Margin="46,50,0,0" VerticalAlignment="Top"/>
+		<Grid Width="350" Height="370" Margin="15,100,0,0" Background="#FFE4E4E4" VerticalAlignment="Top" HorizontalAlignment="Left">
+			<Label Content="G" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="400" FontFamily="Trajan Pro" Height="370" Width="350" Opacity="0.19">
+				<Label.Effect>
+					<BlurEffect Radius="6"/>
+				</Label.Effect>
+			</Label>
+			<Button x:Name="task1" Content="1" Margin="10,10,0,0" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper" Height="40" HorizontalAlignment="Left" Width="80" VerticalAlignment="Top"/>
+			<Button x:Name="task3" Content="3" Margin="9,135,0,0" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper" HorizontalAlignment="Left" Width="81" Height="40" VerticalAlignment="Top"/>
+			<Button x:Name="task2" Content="2" Margin="9,72,0,0" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper" HorizontalAlignment="Left" Width="80" Height="40" VerticalAlignment="Top"/>
+			<Button x:Name="task4" Content="4" Margin="9,200,0,0" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper" HorizontalAlignment="Left" Width="81" Height="40" VerticalAlignment="Top"/>
+			<Button x:Name="task5" Content="5" Margin="10,260,0,0" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper" HorizontalAlignment="Left" Width="81" Height="40" VerticalAlignment="Top"/>
+			<Button x:Name="task6" Content="6" Margin="9,320,0,0" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper" HorizontalAlignment="Left" Width="81" Height="40" VerticalAlignment="Top"/>
+			<Button x:Name="task7" Content="7" Margin="130,10,0,0" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper" HorizontalAlignment="Left" Width="85" Height="40" VerticalAlignment="Top"/>
+			<Button x:Name="task8" Content="8" Margin="130,72,0,0" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper" HorizontalAlignment="Left" Width="85" Height="40" VerticalAlignment="Top"/>
+			<Button x:Name="task9" Content="9" Margin="130,135,0,0" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper" HorizontalAlignment="Left" Width="85" Height="40" VerticalAlignment="Top"/>
+			<Button x:Name="task10" Content="10" Margin="130,200,0,0" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper" HorizontalAlignment="Left" Width="85" Height="40" VerticalAlignment="Top"/>
+			<Button x:Name="task11" Content="11" Margin="130,260,0,0" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper" HorizontalAlignment="Left" Width="85" Height="40" VerticalAlignment="Top"/>
+			<Button x:Name="task12" Content="12" Margin="130,320,0,0" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper" HorizontalAlignment="Left" Width="85" Height="40" VerticalAlignment="Top"/>
+			<Button x:Name="task13" Content="13" Margin="255,10,0,0" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper" HorizontalAlignment="Left" Width="85" Height="40" VerticalAlignment="Top"/>
+			<Button x:Name="task14" Content="14" Margin="255,72,0,0" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper" HorizontalAlignment="Left" Width="85" Height="40" VerticalAlignment="Top"/>
+			<Button x:Name="task15" Content="15" Margin="255,135,0,0" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper" HorizontalAlignment="Left" Width="85" Height="40" VerticalAlignment="Top"/>
+			<Button x:Name="task16" Content="16" Margin="255,200,0,0" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper" HorizontalAlignment="Left" Width="85" Height="40" VerticalAlignment="Top"/>
+			<Button x:Name="task17" Content="17" Margin="255,260,0,0" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper" HorizontalAlignment="Left" Width="85" Height="40" VerticalAlignment="Top"/>
+			<Button x:Name="task18" Content="18" Margin="255,320,0,0" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper" HorizontalAlignment="Left" Width="85" Height="40" VerticalAlignment="Top"/>
+		</Grid>
+		<Grid HorizontalAlignment="Right" Height="370" Margin="0,100,15,0" VerticalAlignment="Top" Width="350" Background="#FFE4E4E4">
+			<Label Content="B" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="400" FontFamily="Trajan Pro" Height="370" Width="350" Opacity="0.19">
+				<Label.Effect>
+					<BlurEffect Radius="6"/>
+				</Label.Effect>
+			</Label>
+			<Button x:Name="task19" Content="19" Margin="10,10,0,0" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper" HorizontalAlignment="Left" Width="85" Height="40" VerticalAlignment="Top"/>
+			<Button x:Name="task20" Content="20" Margin="10,72,0,0" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper" HorizontalAlignment="Left" Width="85" Height="40" VerticalAlignment="Top"/>
+			<Button x:Name="task21" Content="21" Margin="10,135,0,0" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper" HorizontalAlignment="Left" Width="85" Height="40" VerticalAlignment="Top"/>
+			<Button x:Name="task22" Content="22" Margin="10,200,0,0" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper" HorizontalAlignment="Left" Width="85" Height="39" VerticalAlignment="Top"/>
+			<Button x:Name="task23" Content="23" Margin="10,261,0,0" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper" HorizontalAlignment="Left" Width="85" Height="39" VerticalAlignment="Top"/>
+			<Button x:Name="task24" Content="24" Margin="10,321,0,0" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper" HorizontalAlignment="Left" Width="85" Height="39" VerticalAlignment="Top"/>
+			<Button x:Name="task25" Content="25" Margin="135,10,0,0" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper" HorizontalAlignment="Left" Width="85" Height="40" VerticalAlignment="Top"/>
+			<Button x:Name="task26" Content="26" Margin="135,72,0,0" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper" HorizontalAlignment="Left" Width="85" Height="40" VerticalAlignment="Top"/>
+			<Button x:Name="task27" Content="27" Margin="135,135,0,0" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper" HorizontalAlignment="Left" Width="85" Height="40" VerticalAlignment="Top"/>
+			<Button x:Name="task28" Content="28" Margin="135,199,0,0" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper" HorizontalAlignment="Left" Width="85" Height="40" VerticalAlignment="Top"/>
+			<Button x:Name="task29" Content="29" Margin="135,261,0,0" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper" HorizontalAlignment="Left" Width="85" Height="40" VerticalAlignment="Top"/>
+			<Button x:Name="task30" Content="30" Margin="135,320,0,0" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper" HorizontalAlignment="Left" Width="85" Height="40" VerticalAlignment="Top"/>
+			<Button x:Name="task31" Content="31" Margin="255,10,0,0" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper" HorizontalAlignment="Left" Width="85" Height="40" VerticalAlignment="Top"/>
+			<Button x:Name="task32" Content="32" Margin="255,72,0,0" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper" HorizontalAlignment="Left" Width="85" Height="40" VerticalAlignment="Top"/>
+			<Button x:Name="task33" Content="33" Margin="255,135,0,0" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper" HorizontalAlignment="Left" Width="85" Height="40" VerticalAlignment="Top"/>
+			<Button x:Name="task34" Content="34" Margin="255,199,0,0" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper" HorizontalAlignment="Left" Width="85" Height="40" VerticalAlignment="Top"/>
+			<Button x:Name="task35" Content="35" Margin="255,260,0,0" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper" HorizontalAlignment="Left" Width="85" Height="40" VerticalAlignment="Top"/>
+			<Button x:Name="task36" Content="36" Margin="255,320,0,0" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper" HorizontalAlignment="Left" Width="85" Height="40" VerticalAlignment="Top"/>
+		</Grid>
 	</Grid>
 </Controls:MetroWindow>

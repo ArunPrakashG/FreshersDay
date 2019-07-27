@@ -3,24 +3,17 @@ using MahApps.Metro.Controls.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Media;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Threading;
+using WindowsInput;
+using WindowsInput.Native;
 
 namespace FreshersDay {
-	//public class ButtonInfo
-	//{
-	//	public Button Button { get; set; }
-	//	public bool IsDisabled { get; set; }
-	//	public bool EventRegistered { get; set; }
-	//	public string TaskMessage { get; set; }
-	//	public bool IsGirlsTask { get; set; }
-	//	public string AudioFilePath { get; set; }
-	//	public string TaskTitle { get; set; } = "Your task is...";
-	//}
 
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml
@@ -30,8 +23,9 @@ namespace FreshersDay {
 			InitializeComponent();
 		}
 
-		private Config TaskConfig = new Config();
-		private List<string> TaskCollectionList = new List<string>() {
+		private Config TaskConfig { get; set; } = new Config();
+		private int ClickedButtonCount { get; set; }
+		private List<string> TaskCollectionList { get; set; } = new List<string>() {
 			"വേപ്പില കഴിക്കുക",
 			"ബെല്ലി ഡാൻസ്",
 			"ടിക് ടോക് അപാരതാ",
@@ -41,34 +35,16 @@ namespace FreshersDay {
 			"കുഞ്ഞിനെ ഉറക്കുക"
 		};
 
-		private void InitEvents() {
+		private async void InitEvents() {
+			ProgressDialogController progressDialog = await ShowProgressDialog("Loading...", "Loading tasks...").ConfigureAwait(false);
 			TaskConfig = TaskConfig.LoadConfig();
-			LoadButtons();
-
-			//foreach (Button bttn in FindVisualChildren<Button>(grid))
-			//{
-			//	TaskButtonCollection.Add((bttn, new ButtonInfo()
-			//	{
-			//		Button = bttn,
-			//		IsDisabled = false,
-			//		EventRegistered = false,
-			//		AudioFilePath = $"AudioFiles/{bttn.Content}.wav",
-			//		IsGirlsTask = false,
-			//		TaskMessage = SelectTask(bttn),
-			//		TaskTitle = "Your task is..."
-			//	}));
-			//}
-
-			//if (TaskButtonCollection.Count > 0)
-			//{
-			//	foreach ((Button, ButtonInfo) button in TaskButtonCollection)
-			//	{
-			//		button.Item1.Click += Button_Click;
-			//		button.Item2.EventRegistered = true;
-			//	}
-
-			//	CoreInvoke(() => { lastTaskLabel.Content = $"Click on the respective button!"; });
-			//}
+			progressDialog.SetProgress(0.8);
+			await Task.Delay(100).ConfigureAwait(false);
+			progressDialog.SetMessage("Loading task buttons...");
+			CoreInvoke(LoadButtons);
+			await Task.Delay(130).ConfigureAwait(false);
+			progressDialog.SetProgress(1);
+			await progressDialog.CloseAsync().ConfigureAwait(false);
 		}
 
 		private void LoadButtons() {
@@ -115,13 +91,25 @@ namespace FreshersDay {
 			}
 
 			ScheduleTask(() => {
-				MediaPlayer Player = new MediaPlayer();
-				Player.Open(new Uri(filePath));
+				SoundPlayer Player = new SoundPlayer(filePath);
 				Player.Play();
-			}, TimeSpan.FromSeconds(2));
+			}, TimeSpan.FromSeconds(TaskConfig.TaskAudioPlayDelayInSeconds));
 		}
 
-		private static IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj) where T : DependencyObject {
+		private void PlaySound(string filePath, bool noDelay) {
+			if (string.IsNullOrEmpty(filePath) || string.IsNullOrWhiteSpace(filePath)) {
+				return;
+			}
+
+			if (!File.Exists(filePath)) {
+				return;
+			}
+
+			SoundPlayer Player = new SoundPlayer(filePath);
+			Player.Play();
+		}
+
+		private IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj) where T : DependencyObject {
 			if (depObj != null) {
 				for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++) {
 					DependencyObject child = VisualTreeHelper.GetChild(depObj, i);
@@ -153,39 +141,6 @@ namespace FreshersDay {
 		private void MainWindow_OnLoaded(object sender, RoutedEventArgs e) => InitEvents();
 
 		private ButtonInfo GetTaskInfo(Button clickedButton) {
-			//if (clickedButton == null)
-			//{
-			//	return (task1, new ButtonInfo()
-			//	{
-			//		Button = task1,
-			//		IsDisabled = false,
-			//		EventRegistered = false,
-			//		AudioFilePath = $"AudioFiles/{task1.Content}.wav",
-			//		IsGirlsTask = false,
-			//		TaskMessage = SelectTask(task1),
-			//		TaskTitle = "Your task is..."
-			//	}, 0);
-			//}
-
-			//for (int i = 0; i < TaskButtonCollection.Count; i++)
-			//{
-			//	if (TaskButtonCollection[i].Item1.Equals(clickedButton))
-			//	{
-			//		return (TaskButtonCollection[i].Item1, TaskButtonCollection[i].Item2, i);
-			//	}
-			//}
-
-			//return (task1, new ButtonInfo()
-			//{
-			//	Button = task1,
-			//	IsDisabled = false,
-			//	EventRegistered = false,
-			//	AudioFilePath = $"AudioFiles/{task1.Content}.wav",
-			//	IsGirlsTask = false,
-			//	TaskMessage = SelectTask(task1),
-			//	TaskTitle = "Your task is..."
-			//}, 0);
-
 			foreach (ButtonInfo task in TaskConfig.TaskList) {
 				if (task.Button == clickedButton) {
 					return task;
@@ -205,9 +160,16 @@ namespace FreshersDay {
 
 		private async void Button_Click(object sender, RoutedEventArgs e) {
 			Button clickedButton = (Button) sender;
+			ClickedButtonCount++;
 
 			if (clickedButton == null) {
 				return;
+			}
+
+			if ((!string.IsNullOrEmpty(TaskConfig.TaskNotificationSoundPath) ||
+				 !string.IsNullOrWhiteSpace(TaskConfig.TaskNotificationSoundPath)) &&
+				File.Exists(TaskConfig.TaskNotificationSoundPath)) {
+				PlaySound(TaskConfig.TaskNotificationSoundPath, true);
 			}
 
 			clickedButton.Dispatcher.Invoke(() => {
@@ -216,6 +178,9 @@ namespace FreshersDay {
 				clickedButton.Click -= Button_Click;
 			});
 
+			int remainingTasks = 36 - ClickedButtonCount;
+			CoreInvoke(() => { remainingLabel.Content = $"{remainingTasks}/36"; });
+
 			ButtonInfo buttonInfo = GetTaskInfo(clickedButton);
 
 			buttonInfo.IsDisabled = true;
@@ -223,7 +188,13 @@ namespace FreshersDay {
 
 			CoreInvoke(() => { lastTaskLabel.Content = buttonInfo.TaskMessage; });
 			PlaySound(buttonInfo.AudioFilePath);
+			ScheduleTask(() => { StimulateKeypress(VirtualKeyCode.ESCAPE); }, TimeSpan.FromMinutes(TaskConfig.TaskWindowCloseDelayInMinutes));
 			await ShowMessageDialog(buttonInfo.TaskTitle, buttonInfo.TaskMessage, MessageDialogStyle.Affirmative).ConfigureAwait(false);
+		}
+
+		private void StimulateKeypress(VirtualKeyCode keyCode = VirtualKeyCode.ESCAPE) {
+			InputSimulator inputSim = new InputSimulator();
+			inputSim.Keyboard.KeyDown(VirtualKeyCode.ESCAPE);
 		}
 
 		private string SelectRandomTask() {
@@ -241,11 +212,9 @@ namespace FreshersDay {
 		}
 
 		public async Task<MessageDialogResult> ShowMessageDialog(string title = "Your task is...", string message = "ERROR: Unknown task", MessageDialogStyle style = MessageDialogStyle.Affirmative) {
-			MessageDialogResult Result = new MessageDialogResult();
-
-			await Dispatcher.Invoke(async () => {
-				Result = await this.ShowMessageAsync(title, message, style).ConfigureAwait(false);
-			}).ConfigureAwait(false);
+			MessageDialogResult Result = await this.ShowMessageAsync(title, message, style, new MetroDialogSettings() {
+				OwnerCanCloseWithDialog = true
+			});
 			return Result;
 		}
 

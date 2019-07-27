@@ -20,6 +20,10 @@ namespace FreshersDay {
 		[JsonProperty]
 		public List<ButtonInfo> TaskList { get; set; } = new List<ButtonInfo>();
 
+		[JsonProperty] public string TaskNotificationSoundPath { get; set; }
+		[JsonProperty] public int TaskWindowCloseDelayInMinutes { get; set; } = 2;
+		[JsonProperty] public int TaskAudioPlayDelayInSeconds { get; set; } = 3;
+
 		public Config SaveConfig(Config config) {
 			JsonSerializer serializer = new JsonSerializer();
 			JsonConvert.SerializeObject(config, Formatting.Indented);

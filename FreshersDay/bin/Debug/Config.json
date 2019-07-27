@@ -2,9 +2,9 @@
   "TaskList": [
     {
       "ButtonName": "1 [G]",
-      "IsDisabled": true,
+      "IsDisabled": false,
       "ButtonId": "task1",
-      "EventRegistered": false,
+      "EventRegistered": true,
       "TaskTitle": "Here is your task...",
       "TaskMessage": "വേപ്പില കഴിക്കുക",
       "IsGirlsTask": true,
@@ -12,9 +12,9 @@
     },
     {
       "ButtonName": "2 [G]",
-      "IsDisabled": true,
+      "IsDisabled": false,
       "ButtonId": "task2",
-      "EventRegistered": false,
+      "EventRegistered": true,
       "TaskTitle": "Here is your task...",
       "TaskMessage": "ബെല്ലി ഡാൻസ്",
       "IsGirlsTask": true,
@@ -62,9 +62,9 @@
     },
     {
       "ButtonName": "7 [G]",
-      "IsDisabled": false,
+      "IsDisabled": true,
       "ButtonId": "task7",
-      "EventRegistered": true,
+      "EventRegistered": false,
       "TaskTitle": "Here is your task...",
       "TaskMessage": "കുഞ്ഞിനെ ഉറക്കുക",
       "IsGirlsTask": true,
@@ -82,9 +82,9 @@
     },
     {
       "ButtonName": "9 [G]",
-      "IsDisabled": true,
+      "IsDisabled": false,
       "ButtonId": "task9",
-      "EventRegistered": false,
+      "EventRegistered": true,
       "TaskTitle": "Here is your task...",
       "TaskMessage": "വേപ്പില കഴിക്കുക",
       "IsGirlsTask": true,
@@ -152,9 +152,9 @@
     },
     {
       "ButtonName": "16 [G]",
-      "IsDisabled": true,
+      "IsDisabled": false,
       "ButtonId": "task16",
-      "EventRegistered": false,
+      "EventRegistered": true,
       "TaskTitle": "Here is your task...",
       "TaskMessage": "വേപ്പില കഴിക്കുക",
       "IsGirlsTask": true,
@@ -360,5 +360,8 @@
       "IsGirlsTask": false,
       "AudioFilePath": "AudioFiles/36.wav"
     }
-  ]
+  ],
+  "TaskNotificationSoundPath": "AudioFiles/tasknotification.wav",
+  "TaskWindowCloseDelayInMinutes": 2,
+  "TaskAudioPlayDelayInSeconds": 3
 }
