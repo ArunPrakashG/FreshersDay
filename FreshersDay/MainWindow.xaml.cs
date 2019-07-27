@@ -38,6 +38,12 @@ namespace FreshersDay {
 		private async void InitEvents() {
 			ProgressDialogController progressDialog = await ShowProgressDialog("Loading...", "Loading tasks...").ConfigureAwait(false);
 			TaskConfig = TaskConfig.LoadConfig();
+			if (!string.IsNullOrEmpty(TaskConfig.WindowTopTitle) ||
+			    !string.IsNullOrWhiteSpace(TaskConfig.WindowTopTitle)) {
+				CoreInvoke(() => {
+					windowTopTitle.Content = TaskConfig.WindowTopTitle;
+				});
+			}
 			progressDialog.SetProgress(0.8);
 			await Task.Delay(100).ConfigureAwait(false);
 			progressDialog.SetMessage("Loading task buttons...");

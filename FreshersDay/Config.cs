@@ -23,6 +23,7 @@ namespace FreshersDay {
 		[JsonProperty] public string TaskNotificationSoundPath { get; set; }
 		[JsonProperty] public int TaskWindowCloseDelayInMinutes { get; set; } = 2;
 		[JsonProperty] public int TaskAudioPlayDelayInSeconds { get; set; } = 3;
+		[JsonProperty] public string WindowTopTitle { get; set; }
 
 		public Config SaveConfig(Config config) {
 			JsonSerializer serializer = new JsonSerializer();

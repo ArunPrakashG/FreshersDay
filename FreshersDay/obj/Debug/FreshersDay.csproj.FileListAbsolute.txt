@@ -6,11 +6,6 @@ D:\GitHub-Projects\FreshersDay\FreshersDay\obj\Debug\FreshersDay_MarkupCompile.l
 D:\GitHub-Projects\FreshersDay\FreshersDay\bin\Debug\FreshersDay.exe.config
 D:\GitHub-Projects\FreshersDay\FreshersDay\bin\Debug\FreshersDay.exe
 D:\GitHub-Projects\FreshersDay\FreshersDay\bin\Debug\FreshersDay.pdb
-D:\GitHub-Projects\FreshersDay\FreshersDay\bin\Debug\ControlzEx.dll
-D:\GitHub-Projects\FreshersDay\FreshersDay\bin\Debug\MahApps.Metro.dll
-D:\GitHub-Projects\FreshersDay\FreshersDay\bin\Debug\System.Windows.Interactivity.dll
-D:\GitHub-Projects\FreshersDay\FreshersDay\bin\Debug\ControlzEx.pdb
-D:\GitHub-Projects\FreshersDay\FreshersDay\bin\Debug\MahApps.Metro.pdb
 D:\GitHub-Projects\FreshersDay\FreshersDay\bin\Debug\MahApps.Metro.xml
 D:\GitHub-Projects\FreshersDay\FreshersDay\obj\Debug\App.baml
 D:\GitHub-Projects\FreshersDay\FreshersDay\obj\Debug\MainWindow.baml
@@ -21,9 +16,8 @@ D:\GitHub-Projects\FreshersDay\FreshersDay\obj\Debug\FreshersDay.csproj.CoreComp
 D:\GitHub-Projects\FreshersDay\FreshersDay\obj\Debug\FreshersDay.csproj.CopyComplete
 D:\GitHub-Projects\FreshersDay\FreshersDay\obj\Debug\FreshersDay.exe
 D:\GitHub-Projects\FreshersDay\FreshersDay\obj\Debug\FreshersDay.pdb
-D:\GitHub-Projects\FreshersDay\FreshersDay\bin\Debug\Newtonsoft.Json.dll
 D:\GitHub-Projects\FreshersDay\FreshersDay\bin\Debug\Newtonsoft.Json.xml
 D:\GitHub-Projects\FreshersDay\FreshersDay\bin\Debug\AudioFiles\tasknotification.wav
 D:\GitHub-Projects\FreshersDay\FreshersDay\obj\Debug\FreshersDay_Content.g.cs
-D:\GitHub-Projects\FreshersDay\FreshersDay\bin\Debug\WindowsInput.dll
 D:\GitHub-Projects\FreshersDay\FreshersDay\bin\Debug\WindowsInput.xml
+D:\GitHub-Projects\FreshersDay\FreshersDay\obj\Debug\FreshersDay.csproj.Fody.CopyLocal.cache

@@ -20,8 +20,8 @@
 	<Grid Name="grid">
 		<Label Content="Tasks remaining" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Margin="0,276,0,0" VerticalAlignment="Top"/>
 		<Label x:Name="remainingLabel" Content="36/36" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Margin="0,250,0,0" VerticalAlignment="Top" FontSize="15"/>
-		<Label x:Name="lastTaskLabel" Content="Previous task" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Margin="13,510,18,0" VerticalAlignment="Top" FontFamily="Tekton Pro" FontSize="16" Height="31" />
-		<Label Content="BCA 🖥compriderzzz🌍" HorizontalAlignment="Center" HorizontalContentAlignment="Center" Margin="231,11,227,0" VerticalAlignment="Top" FontFamily="Kozuka Gothic Pro M" FontSize="36" Height="67" Width="404" Opacity="0.15"/>
+		<Label x:Name="lastTaskLabel" Content="Previous task" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Margin="13,510,18,0" VerticalAlignment="Top" FontFamily="Tekton Pro" FontSize="16" Height="31" Foreground="Black" />
+		<Label Name="windowTopTitle" Content="BCA 🖥compriderzzz🌍" HorizontalAlignment="Center" HorizontalContentAlignment="Center" Margin="231,11,227,0" VerticalAlignment="Top" FontFamily="Kozuka Gothic Pro M" FontSize="36" Height="67" Width="404" Opacity="0.15"/>
 		<Label Content="Previous task:" HorizontalAlignment="Left" Margin="13,481,0,0" VerticalAlignment="Top" FontSize="10"/>
 		<Rectangle Fill="Pink" HorizontalAlignment="Left" Height="17" Margin="15,31,0,0" Stroke="Black" VerticalAlignment="Top" Width="25"/>
 		<Label Content="[G] for girls" HorizontalAlignment="Left" Margin="46,26,0,0" VerticalAlignment="Top" Height="27"/>
