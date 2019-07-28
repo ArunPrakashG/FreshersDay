@@ -28,7 +28,7 @@
 		<Rectangle Fill="DeepSkyBlue" HorizontalAlignment="Left" Height="17" Margin="380,161,0,0" Stroke="Black" VerticalAlignment="Top" Width="25"/>
 		<Label Content="[B] for boys" HorizontalAlignment="Left" Margin="411,155,0,0" VerticalAlignment="Top"/>
 		<Grid Width="350" Height="497" Margin="15,69,0,0" Background="#FFE4E4E4" VerticalAlignment="Top" HorizontalAlignment="Left">
-			<Label Content="G" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="400" FontFamily="Trajan Pro" Height="376" Width="350" Opacity="0.19" Margin="0,66,0,0">
+			<Label Content="G" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="400" FontFamily="Trajan Pro" Height="376" Width="350" Opacity="0.19" Margin="0,39,0,0">
 				<Label.Effect>
 					<BlurEffect Radius="6"/>
 				</Label.Effect>
@@ -59,7 +59,7 @@
 			<Button  Name="task24" Content="24" Margin="255,442,0,0" BorderThickness="1" Style="{DynamicResource SquareButtonStyle}" Controls:ControlsHelper.ContentCharacterCasing="Upper" HorizontalAlignment="Left" Width="85" Height="40" VerticalAlignment="Top"/>
 		</Grid>
 		<Grid HorizontalAlignment="Right" Height="497" Margin="0,69,15,0" VerticalAlignment="Top" Width="350" Background="#FFE4E4E4">
-			<Label Content="B" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="400" FontFamily="Trajan Pro" Height="376" Width="350" Opacity="0.19" Margin="0,69,0,0">
+			<Label Content="B" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="400" FontFamily="Trajan Pro" Height="376" Width="350" Opacity="0.19" Margin="0,39,0,0">
 				<Label.Effect>
 					<BlurEffect Radius="6"/>
 				</Label.Effect>
