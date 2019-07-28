@@ -39,7 +39,7 @@ namespace FreshersDay {
 			ProgressDialogController progressDialog = await ShowProgressDialog("Loading...", "Loading tasks...").ConfigureAwait(false);
 			TaskConfig = TaskConfig.LoadConfig();
 			if (!string.IsNullOrEmpty(TaskConfig.WindowTopTitle) ||
-			    !string.IsNullOrWhiteSpace(TaskConfig.WindowTopTitle)) {
+				!string.IsNullOrWhiteSpace(TaskConfig.WindowTopTitle)) {
 				CoreInvoke(() => {
 					windowTopTitle.Content = TaskConfig.WindowTopTitle;
 				});
@@ -70,9 +70,9 @@ namespace FreshersDay {
 			CoreInvoke(() => { lastTaskLabel.Content = $"Click on the respective button!"; });
 		}
 
-		public static void ScheduleTask(Action action, TimeSpan delay) {
+		public static Timer ScheduleTask(Action action, TimeSpan delay) {
 			if (action == null) {
-				return;
+				return null;
 			}
 
 			Timer TaskSchedulerTimer = null;
@@ -85,6 +85,7 @@ namespace FreshersDay {
 					TaskSchedulerTimer = null;
 				}
 			}, null, delay, delay);
+			return TaskSchedulerTimer;
 		}
 
 		private void PlaySound(string filePath) {
@@ -184,8 +185,8 @@ namespace FreshersDay {
 				clickedButton.Click -= Button_Click;
 			});
 
-			int remainingTasks = 36 - ClickedButtonCount;
-			CoreInvoke(() => { remainingLabel.Content = $"{remainingTasks}/36"; });
+			int remainingTasks = 48 - ClickedButtonCount;
+			CoreInvoke(() => { remainingLabel.Content = $"{remainingTasks}/48"; });
 
 			ButtonInfo buttonInfo = GetTaskInfo(clickedButton);
 
@@ -194,8 +195,27 @@ namespace FreshersDay {
 
 			CoreInvoke(() => { lastTaskLabel.Content = buttonInfo.TaskMessage; });
 			PlaySound(buttonInfo.AudioFilePath);
-			ScheduleTask(() => { StimulateKeypress(VirtualKeyCode.ESCAPE); }, TimeSpan.FromMinutes(TaskConfig.TaskWindowCloseDelayInMinutes));
-			await ShowMessageDialog(buttonInfo.TaskTitle, buttonInfo.TaskMessage, MessageDialogStyle.Affirmative).ConfigureAwait(false);
+			Timer timer = ScheduleTask(() => { StimulateKeypress(VirtualKeyCode.ESCAPE); }, TimeSpan.FromMinutes(TaskConfig.TaskWindowCloseDelayInMinutes));
+			MessageDialogResult result = await ShowMessageDialog(buttonInfo.TaskTitle, buttonInfo.TaskMessage, MessageDialogStyle.Affirmative).ConfigureAwait(false);
+
+			switch (result) {
+				case MessageDialogResult.Affirmative:
+				case MessageDialogResult.Canceled: {
+						if (timer != null) {
+							timer.Dispose();
+						}
+
+						break;
+					}
+
+				default: {
+						if (timer != null) {
+							timer.Dispose();
+						}
+
+						break;
+					}
+			}
 		}
 
 		private void StimulateKeypress(VirtualKeyCode keyCode = VirtualKeyCode.ESCAPE) {

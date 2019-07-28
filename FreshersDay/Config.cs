@@ -7,12 +7,13 @@ namespace FreshersDay {
 	public class ButtonInfo {
 		[JsonProperty] public string ButtonName { get; set; } = "1";
 		[JsonIgnore] public Button Button { get; set; }
-		[JsonProperty] public bool IsDisabled { get; set; } = false;
+		[JsonIgnore] public bool IsDisabled { get; set; } = false;
 		[JsonProperty] public string ButtonId { get; set; } = "task1";
-		[JsonProperty] public bool EventRegistered { get; set; } = false;
+		[JsonIgnore] public bool EventRegistered { get; set; } = false;
 		[JsonProperty] public string TaskTitle { get; set; } = "Here is your task...";
 		[JsonProperty] public string TaskMessage { get; set; } = "വേപ്പില കഴിക്കുക";
 		[JsonProperty] public bool IsGirlsTask { get; set; } = false;
+		[JsonProperty] public bool IsCommonTask { get; set; } = false;
 		[JsonProperty] public string AudioFilePath { get; set; } = @"AudioFiles/1.wav";
 	}
 
@@ -64,7 +65,7 @@ namespace FreshersDay {
 			int i = 1;
 
 			while (true) {
-				if (i >= 37) {
+				if (i >= 49) {
 					break;
 				}
 
