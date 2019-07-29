@@ -278,6 +278,9 @@ namespace FreshersDay {
 					foreach (Button bttn in PunishmentButtonsList) {
 						if (!bttn.IsEnabled) {
 							bttn.IsEnabled = true;
+							ClickedButtonCount--;
+							int remainingTasks = 48 - ClickedButtonCount;
+							CoreInvoke(() => { remainingLabel.Content = $"{remainingTasks}/48"; });
 						}
 
 						foreach (ButtonInfo task in TaskConfig.TaskList) {
@@ -306,6 +309,9 @@ namespace FreshersDay {
 					foreach (Button bttn in TaskButtonsList) {
 						if (!bttn.IsEnabled) {
 							bttn.IsEnabled = true;
+							ClickedButtonCount--;
+							int remainingTasks = 48 - ClickedButtonCount;
+							CoreInvoke(() => { remainingLabel.Content = $"{remainingTasks}/48"; });
 						}
 
 						foreach (ButtonInfo task in TaskConfig.TaskList) {
