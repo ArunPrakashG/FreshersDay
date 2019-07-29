@@ -21,3 +21,4 @@ D:\GitHub-Projects\FreshersDay\FreshersDay\bin\Debug\AudioFiles\tasknotification
 D:\GitHub-Projects\FreshersDay\FreshersDay\obj\Debug\FreshersDay_Content.g.cs
 D:\GitHub-Projects\FreshersDay\FreshersDay\bin\Debug\WindowsInput.xml
 D:\GitHub-Projects\FreshersDay\FreshersDay\obj\Debug\FreshersDay.csproj.Fody.CopyLocal.cache
+D:\GitHub-Projects\FreshersDay\FreshersDay\bin\Debug\Config.json

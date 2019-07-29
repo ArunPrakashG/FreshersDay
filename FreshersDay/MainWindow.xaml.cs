@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 using WindowsInput;
@@ -29,11 +30,14 @@ namespace FreshersDay {
 			"വേപ്പില കഴിക്കുക",
 			"ബെല്ലി ഡാൻസ്",
 			"ടിക് ടോക് അപാരതാ",
-			"പ്രൊപോസൽ ചെയ്യുക",
-			"പാവയ്ക്കാ ജൂസ് കുടിക്കുക",
-			"പുളി കഴിക്കുക (മുഖത്തെ ഏക്സ്പ്രെഷൻ മാറാതെ)",
+			"പശുവിനെ കറക്കുക",
+			"Pushup",
+			"പാട്ട് തിരിച് പാടുക",
 			"കുഞ്ഞിനെ ഉറക്കുക"
 		};
+
+		private List<Button> TaskButtonsList { get; set; } = new List<Button>();
+		private List<Button> PunishmentButtonsList { get; set; } = new List<Button>();
 
 		private async void InitEvents() {
 			ProgressDialogController progressDialog = await ShowProgressDialog("Loading...", "Loading tasks...").ConfigureAwait(false);
@@ -58,16 +62,24 @@ namespace FreshersDay {
 				foreach (ButtonInfo task in TaskConfig.TaskList) {
 					if (bttn.Name.Equals(task.ButtonId, StringComparison.OrdinalIgnoreCase)) {
 						task.Button = bttn;
-						bttn.Background = task.IsGirlsTask ? Brushes.Pink : Brushes.DeepSkyBlue;
+						bttn.Background = task.IsPunishmentTask ? Brushes.Coral : task.IsGirlsOnly ?
+							Brushes.Pink : task.IsBoysOnly ? Brushes.DeepSkyBlue : Brushes.White;
 						bttn.Click += Button_Click;
 						task.EventRegistered = true;
 						task.IsDisabled = false;
 						bttn.Content = task.ButtonName;
+
+						if (task.IsPunishmentTask) {
+							PunishmentButtonsList.Add(bttn);
+						}
+						else {
+							TaskButtonsList.Add(bttn);
+						}
 					}
 				}
 			}
 
-			CoreInvoke(() => { lastTaskLabel.Content = $"Click on the respective button!"; });
+			CoreInvoke(() => { lastTaskLabel.Content = $"Click on the button!"; });
 		}
 
 		public static Timer ScheduleTask(Action action, TimeSpan delay) {
@@ -159,7 +171,9 @@ namespace FreshersDay {
 				IsDisabled = false,
 				EventRegistered = false,
 				AudioFilePath = $"AudioFiles/{task1.Content}.wav",
-				IsGirlsTask = Convert.ToInt32(task1.Content) > 0 && Convert.ToInt32(task1.Content) <= 18,
+				IsGirlsOnly = false,
+				IsPunishmentTask = false,
+				IsBoysOnly = false,
 				TaskMessage = SelectRandomTask(),
 				TaskTitle = "Your task is..."
 			};
@@ -238,9 +252,11 @@ namespace FreshersDay {
 		}
 
 		public async Task<MessageDialogResult> ShowMessageDialog(string title = "Your task is...", string message = "ERROR: Unknown task", MessageDialogStyle style = MessageDialogStyle.Affirmative) {
-			MessageDialogResult Result = await this.ShowMessageAsync(title, message, style, new MetroDialogSettings() {
-				OwnerCanCloseWithDialog = true
-			});
+			MessageDialogResult Result = MessageDialogResult.Affirmative;
+			await Dispatcher.Invoke(async () => {
+				Result = await this.ShowMessageAsync(title, message, style,new MetroDialogSettings() {OwnerCanCloseWithDialog = true});
+			}).ConfigureAwait(false);
+			
 			return Result;
 		}
 
@@ -253,7 +269,64 @@ namespace FreshersDay {
 		}
 
 		private void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
-			TaskConfig.SaveConfig(TaskConfig);
+			
+		}
+
+		private void PunishmentButtonDoubleClick(object sender, MouseButtonEventArgs e) {
+			if (PunishmentButtonsList == null || PunishmentButtonsList.Count > 0) {
+				CoreInvoke(() => {
+					foreach (Button bttn in PunishmentButtonsList) {
+						if (!bttn.IsEnabled) {
+							bttn.IsEnabled = true;
+						}
+
+						foreach (ButtonInfo task in TaskConfig.TaskList) {
+							if (task.Button == bttn) {
+								if (!task.EventRegistered) {
+									bttn.Click += Button_Click;
+									task.EventRegistered = true;
+								}
+
+								if (task.IsDisabled) {
+									task.IsDisabled = false;
+								}
+
+								bttn.Background = task.IsPunishmentTask ? Brushes.Coral : task.IsGirlsOnly ?
+									Brushes.Pink : task.IsBoysOnly ? Brushes.DeepSkyBlue : Brushes.White;
+							}
+						}
+					}
+				});
+			}
+		}
+
+		private void TaskResetDoubleClick(object sender, MouseButtonEventArgs e) {
+			if (TaskButtonsList == null || TaskButtonsList.Count > 0) {
+				CoreInvoke(() => {
+					foreach (Button bttn in TaskButtonsList) {
+						if (!bttn.IsEnabled) {
+							bttn.IsEnabled = true;
+						}
+
+						foreach (ButtonInfo task in TaskConfig.TaskList) {
+							if (task.Button == bttn) {
+
+								if (!task.EventRegistered) {
+									bttn.Click += Button_Click;
+									task.EventRegistered = true;
+								}
+
+								if (task.IsDisabled) {
+									task.IsDisabled = false;
+								}
+
+								bttn.Background = task.IsPunishmentTask ? Brushes.Coral : task.IsGirlsOnly ?
+									Brushes.Pink : task.IsBoysOnly ? Brushes.DeepSkyBlue : Brushes.White;
+							}
+						}
+					}
+				});
+			}
 		}
 	}
 }

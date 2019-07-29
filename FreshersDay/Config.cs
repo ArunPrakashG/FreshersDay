@@ -12,8 +12,9 @@ namespace FreshersDay {
 		[JsonIgnore] public bool EventRegistered { get; set; } = false;
 		[JsonProperty] public string TaskTitle { get; set; } = "Here is your task...";
 		[JsonProperty] public string TaskMessage { get; set; } = "വേപ്പില കഴിക്കുക";
-		[JsonProperty] public bool IsGirlsTask { get; set; } = false;
-		[JsonProperty] public bool IsCommonTask { get; set; } = false;
+		[JsonProperty] public bool IsGirlsOnly { get; set; } = false;
+		[JsonProperty] public bool IsBoysOnly { get; set; } = false;
+		[JsonProperty] public bool IsPunishmentTask { get; set; } = false;
 		[JsonProperty] public string AudioFilePath { get; set; } = @"AudioFiles/1.wav";
 	}
 
@@ -73,7 +74,7 @@ namespace FreshersDay {
 					ButtonName = i.ToString(),
 					ButtonId = $"task{i}",
 					AudioFilePath = $@"AudioFiles/{i}.wav",
-					IsGirlsTask = i > 0 && i <= 18
+					IsGirlsOnly = i > 0 && i <= 18
 				});
 				i++;
 			}
