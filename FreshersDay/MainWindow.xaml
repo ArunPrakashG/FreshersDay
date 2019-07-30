@@ -25,7 +25,7 @@
 			</Label.Effect>
 		</Label>
 		<Label x:Name="lastTaskLabel" Content="Previous task" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Margin="16,667,14,0" VerticalAlignment="Top" FontFamily="Yu Gothic UI Semibold" FontSize="18" Height="36" Foreground="Black" />
-		<Label Name="windowTopTitle" Content="BCA Techiezz" HorizontalAlignment="Center" HorizontalContentAlignment="Center" Margin="117,14,97,0" VerticalAlignment="Top" FontFamily="Kozuka Mincho Pr6N B" FontSize="36" Height="67" Width="648" Background="{x:Null}" Foreground="#FF203AE2"/>
+		<Label Name="windowTopTitle" Content="🖥compriderzzz🌍" HorizontalAlignment="Center" HorizontalContentAlignment="Center" Margin="117,14,97,0" VerticalAlignment="Top" FontFamily="Kozuka Mincho Pr6N B" FontSize="36" Height="67" Width="648" Background="{x:Null}" Foreground="#FF2540F1"/>
 		<Label Content="Previous task:" HorizontalAlignment="Left" Margin="11,0,0,39" VerticalAlignment="Bottom" FontSize="10"/>
 		<Rectangle Fill="Pink" HorizontalAlignment="Left" Height="17" Margin="16,13,0,0" Stroke="Black" VerticalAlignment="Top" Width="25"/>
 		<Label Content="for girls" HorizontalAlignment="Left" Margin="47,8,0,0" VerticalAlignment="Top" Height="27" MouseDoubleClick="TaskResetDoubleClick"/>
