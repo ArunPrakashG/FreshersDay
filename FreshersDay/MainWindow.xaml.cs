@@ -3,6 +3,7 @@ using MahApps.Metro.Controls.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Media;
 using System.Threading;
 using System.Threading.Tasks;
@@ -24,6 +25,7 @@ namespace FreshersDay {
 			InitializeComponent();
 		}
 
+		private static Random Random = new Random();
 		private Config TaskConfig { get; set; } = new Config();
 		private int ClickedButtonCount { get; set; }
 		private List<string> TaskCollectionList { get; set; } = new List<string>() {
@@ -55,6 +57,24 @@ namespace FreshersDay {
 			await Task.Delay(130).ConfigureAwait(false);
 			progressDialog.SetProgress(1);
 			await progressDialog.CloseAsync().ConfigureAwait(false);
+		}
+
+		private void SelectRandomAvailableTask() {
+			List<Button> taskableButtons = new List<Button>();
+
+			try {
+				foreach (Button bttn in FindVisualChildren<Button>(grid)) {
+					if (!bttn.IsEnabled) {
+						continue;
+					}
+
+					taskableButtons.Add(bttn);
+				}
+
+				var taskButton = taskableButtons.ElementAt(Random.Next(0, taskableButtons.Count));
+				taskButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+			}
+			catch { }
 		}
 
 		private void LoadButtons() {
@@ -254,9 +274,9 @@ namespace FreshersDay {
 		public async Task<MessageDialogResult> ShowMessageDialog(string title = "Your task is...", string message = "ERROR: Unknown task", MessageDialogStyle style = MessageDialogStyle.Affirmative) {
 			MessageDialogResult Result = MessageDialogResult.Affirmative;
 			await Dispatcher.Invoke(async () => {
-				Result = await this.ShowMessageAsync(title, message, style,new MetroDialogSettings() {OwnerCanCloseWithDialog = true});
+				Result = await this.ShowMessageAsync(title, message, style, new MetroDialogSettings() { OwnerCanCloseWithDialog = true });
 			}).ConfigureAwait(false);
-			
+
 			return Result;
 		}
 
@@ -269,7 +289,7 @@ namespace FreshersDay {
 		}
 
 		private void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
-			
+
 		}
 
 		private void PunishmentButtonDoubleClick(object sender, MouseButtonEventArgs e) {
@@ -333,6 +353,10 @@ namespace FreshersDay {
 					}
 				});
 			}
+		}
+
+		private void Button_Click_1(object sender, RoutedEventArgs e) {
+			SelectRandomAvailableTask();
 		}
 	}
 }
