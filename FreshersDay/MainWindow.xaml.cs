@@ -2,9 +2,12 @@ using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Media;
+using System.Speech.Synthesis;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -21,49 +24,209 @@ namespace FreshersDay {
 	/// Interaction logic for MainWindow.xaml
 	/// </summary>
 	public partial class MainWindow : MetroWindow {
-		public MainWindow() {
-			InitializeComponent();
+		private static readonly Random Random;
+		private static readonly Config Config;
+
+		static MainWindow() {
+			Random = new Random();
+			Config = new Config();
 		}
 
-		private static Random Random = new Random();
-		private Config TaskConfig { get; set; } = new Config();
-		private int ClickedButtonCount { get; set; }
-		private List<string> TaskCollectionList { get; set; } = new List<string>() {
-			"വേപ്പില കഴിക്കുക",
-			"ബെല്ലി ഡാൻസ്",
-			"ടിക് ടോക് അപാരതാ",
-			"പശുവിനെ കറക്കുക",
-			"Pushup",
-			"പാട്ട് തിരിച് പാടുക",
-			"കുഞ്ഞിനെ ഉറക്കുക"
-		};
+		public MainWindow() {
+			InitializeComponent();
+			Loaded += async (sender, e) => {
+				ProgressDialogController progressDialog = await ShowProgressDialog("Loading...", "Loading tasks...").ConfigureAwait(false);
+				await Config.LoadConfig();
 
-		private List<Button> TaskButtonsList { get; set; } = new List<Button>();
-		private List<Button> PunishmentButtonsList { get; set; } = new List<Button>();
+				Dispatcher.Invoke(() => ProgramTitle.Content = Config.WindowTitle ?? "...");
 
-		private async void InitEvents() {
-			ProgressDialogController progressDialog = await ShowProgressDialog("Loading...", "Loading tasks...").ConfigureAwait(false);
-			TaskConfig = TaskConfig.LoadConfig();
-			if (!string.IsNullOrEmpty(TaskConfig.WindowTopTitle) ||
-				!string.IsNullOrWhiteSpace(TaskConfig.WindowTopTitle)) {
-				CoreInvoke(() => {
-					windowTopTitle.Content = TaskConfig.WindowTopTitle;
-				});
+				progressDialog.SetProgress(0.8);
+				await Task.Delay(100).ConfigureAwait(false);
+				progressDialog.SetMessage("Loading Task Buttons...");
+				Dispatcher.Invoke(InitTaskButtons);
+				await Task.Delay(130).ConfigureAwait(false);
+				Dispatcher.Invoke(() => RemainingTasksLabel.Content = $"{GetAvailableTasksCount()}/{Config.Tasks.Count}");
+				progressDialog.SetProgress(1);
+				await progressDialog.CloseAsync().ConfigureAwait(false);
+			};
+		}
+
+		private void InitTaskButtons() {
+			if(Config.Tasks == null) {
+				return;
 			}
-			progressDialog.SetProgress(0.8);
-			await Task.Delay(100).ConfigureAwait(false);
-			progressDialog.SetMessage("Loading task buttons...");
-			CoreInvoke(LoadButtons);
-			await Task.Delay(130).ConfigureAwait(false);
-			progressDialog.SetProgress(1);
-			await progressDialog.CloseAsync().ConfigureAwait(false);
+
+			InitTasksForElement(TasksGrid, default);
+			InitTasksForElement(PunishmentTasksGrid, Config.TaskType.Punishment);
+		}
+
+		private void InitTasksForElement(DependencyObject element, Config.TaskType taskType = default) {
+			int index = 0;
+			foreach (var bttn in FindVisualChildren<Button>(element)) {
+				if (bttn == null) {
+					continue;
+				}
+
+				try {
+					bttn.Click += OnTaskButtonClicked;
+					//bttn.Content = (index + 1).ToString();
+					var task = taskType == Config.TaskType.Punishment ? Config.Tasks.Where(x => x.TaskType == Config.TaskType.Punishment).ElementAtOrDefault(index) : Config.Tasks.ElementAtOrDefault(index);
+
+					if (task == null) {
+						bttn.IsEnabled = false;
+						bttn.Background = Brushes.Gray;
+						continue;
+					}
+
+					task.Button = bttn;
+					task.EventRegistered = true;
+					task.IsDisabled = false;
+
+					switch (task.TaskType) {
+						case Config.TaskType.Punishment:
+							bttn.Background = Brushes.Coral;
+							break;
+						case Config.TaskType.Girls:
+							bttn.Background = Brushes.Pink;
+							break;
+						case Config.TaskType.Boys:
+							bttn.Background = Brushes.DeepSkyBlue;
+							break;
+						case Config.TaskType.Common:
+							bttn.Background = Brushes.White;
+							break;
+					}
+				}
+				catch(Exception e) {
+					Console.WriteLine(e);
+					continue;
+				}
+				finally {
+					index++;
+				}
+			}
+		}
+
+		private async void OnTaskButtonClicked(object sender, RoutedEventArgs e) {
+			Button clickedButton = sender as Button;
+			var taskConfig = GetTaskForClickedButton(clickedButton);
+
+			PlaySound(Config.NotificationPath, TimeSpan.Zero);
+
+			clickedButton.Dispatcher.Invoke(() => {
+				clickedButton.Background = Brushes.Gray;
+				clickedButton.IsEnabled = false;				
+				clickedButton.Click -= OnTaskButtonClicked;
+			});
+
+			Dispatcher.Invoke(() => {
+				RemainingTasksLabel.Content = $"{GetAvailableTasksCount()}/{Config.Tasks.Count}";
+				PreviousTaskLabel.Content = taskConfig.TaskMessage;
+			});
+
+			clickedButton.IsEnabled = false;
+			taskConfig.EventRegistered = false;
+			taskConfig.IsDisabled = true;
+			clickedButton.Click -= OnTaskButtonClicked;
+
+			PlaySound(taskConfig.AudioFilePath, TimeSpan.FromSeconds(Config.TaskAudioDelaySeconds));
+			Timer timer = ScheduleTask(() => { StimulateKeypress(VirtualKeyCode.ESCAPE); }, TimeSpan.FromMinutes(Config.WindowCloseDelayMinutes));
+			await TextToSpeech(taskConfig.TaskMessage);
+			await ShowMessageDialog("Your Task is ...", taskConfig.TaskMessage, MessageDialogStyle.Affirmative).ConfigureAwait(false);
+			timer?.Dispose();
+		}
+
+		private void ResetTasks(Config.TaskType taskType) {
+			foreach (var task in Config.Tasks) {
+				if (task.TaskType != taskType) {
+					continue;
+				}
+
+				if (task.Button == null || task.Button.IsEnabled) {
+					continue;
+				}
+
+				Dispatcher.Invoke(() => task.Button.IsEnabled = true);
+				task.IsDisabled = false;
+
+				if (!task.EventRegistered) {
+					task.Button.Click += OnTaskButtonClicked;
+					task.EventRegistered = true;					
+				}
+
+				switch (task.TaskType) {
+					case Config.TaskType.Punishment:
+						Dispatcher.Invoke(() => task.Button.Background = Brushes.Coral);
+						break;
+					case Config.TaskType.Girls:
+						Dispatcher.Invoke(() => task.Button.Background = Brushes.Pink);
+						break;
+					case Config.TaskType.Boys:
+						Dispatcher.Invoke(() => task.Button.Background = Brushes.DeepSkyBlue);
+						break;
+					case Config.TaskType.Common:
+						Dispatcher.Invoke(() => task.Button.Background = Brushes.White);
+						break;
+				}
+			}
+
+			Dispatcher.Invoke(() => RemainingTasksLabel.Content = $"{GetAvailableTasksCount()}/{Config.Tasks.Count}");
+		}
+
+		private void PunishmentButtonDoubleClick(object sender, MouseButtonEventArgs e) => ResetTasks(Config.TaskType.Punishment);
+
+		private void TaskResetDoubleClick(object sender, MouseButtonEventArgs e) {
+			ResetTasks(Config.TaskType.Boys);
+			ResetTasks(Config.TaskType.Girls);
+			ResetTasks(Config.TaskType.Common);
+			ResetTasks(Config.TaskType.Punishment);
+		}
+
+		private TaskConfig GetTaskForClickedButton(Button clickedButton) {
+			if(clickedButton == null) {
+				return null;
+			}
+
+			try {
+				foreach (var task in Config.Tasks) {
+					if (task.Button.Equals(clickedButton)) {
+						return task;
+					}
+				}
+
+				return null;
+			}
+			catch {
+				return null;
+			}			
+		}
+
+		private async Task<bool> TextToSpeech(string text) {
+			if (!Config.TextToSpeech) {
+				return false;
+			}
+
+			Regex regex = new Regex("^[a-zA-Z0-9. -_?]*$");
+
+			if (string.IsNullOrEmpty(text) || !regex.IsMatch(text)) {
+				return false;
+			}
+
+			SpeechSynthesizer synthesizer = new SpeechSynthesizer {
+				Volume = 100,
+				Rate = -2			
+			};
+
+			synthesizer.SetOutputToDefaultAudioDevice();
+			Prompt result = synthesizer.SpeakAsync(text);
+			return await Task.FromResult(result.IsCompleted);
 		}
 
 		private void SelectRandomAvailableTask() {
 			List<Button> taskableButtons = new List<Button>();
 
 			try {
-				foreach (Button bttn in FindVisualChildren<Button>(grid)) {
+				foreach (Button bttn in FindVisualChildren<Button>(TasksGrid)) {
 					if (!bttn.IsEnabled) {
 						continue;
 					}
@@ -75,31 +238,6 @@ namespace FreshersDay {
 				taskButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
 			}
 			catch { }
-		}
-
-		private void LoadButtons() {
-			foreach (Button bttn in FindVisualChildren<Button>(grid)) {
-				foreach (ButtonInfo task in TaskConfig.TaskList) {
-					if (bttn.Name.Equals(task.ButtonId, StringComparison.OrdinalIgnoreCase)) {
-						task.Button = bttn;
-						bttn.Background = task.IsPunishmentTask ? Brushes.Coral : task.IsGirlsOnly ?
-							Brushes.Pink : task.IsBoysOnly ? Brushes.DeepSkyBlue : Brushes.White;
-						bttn.Click += Button_Click;
-						task.EventRegistered = true;
-						task.IsDisabled = false;
-						bttn.Content = task.ButtonName;
-
-						if (task.IsPunishmentTask) {
-							PunishmentButtonsList.Add(bttn);
-						}
-						else {
-							TaskButtonsList.Add(bttn);
-						}
-					}
-				}
-			}
-
-			CoreInvoke(() => { lastTaskLabel.Content = $"Click on the button!"; });
 		}
 
 		public static Timer ScheduleTask(Action action, TimeSpan delay) {
@@ -120,40 +258,29 @@ namespace FreshersDay {
 			return TaskSchedulerTimer;
 		}
 
-		private void PlaySound(string filePath) {
-			if (string.IsNullOrEmpty(filePath) || string.IsNullOrWhiteSpace(filePath)) {
-				return;
-			}
-
-			if (!File.Exists(filePath)) {
-				return;
-			}
-
-			ScheduleTask(() => {
-				SoundPlayer Player = new SoundPlayer(filePath);
-				Player.Play();
-			}, TimeSpan.FromSeconds(TaskConfig.TaskAudioPlayDelayInSeconds));
-		}
-
-		private void PlaySound(string filePath, bool noDelay) {
-			if (string.IsNullOrEmpty(filePath) || string.IsNullOrWhiteSpace(filePath)) {
-				return;
-			}
-
-			if (!File.Exists(filePath)) {
+		private void PlaySound(string filePath, TimeSpan delay) {
+			if(string.IsNullOrEmpty(filePath) || !File.Exists(filePath)) {
 				return;
 			}
 
 			SoundPlayer Player = new SoundPlayer(filePath);
-			Player.Play();
+
+			if(delay == TimeSpan.Zero) {
+				Player.Play();
+				return;
+			}
+
+			ScheduleTask(() => {				
+				Player.Play();
+			}, delay);
 		}
 
 		private IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj) where T : DependencyObject {
 			if (depObj != null) {
 				for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++) {
 					DependencyObject child = VisualTreeHelper.GetChild(depObj, i);
-					if (child != null && child is T) {
-						yield return (T) child;
+					if (child != null && child is T t) {
+						yield return t;
 					}
 
 					foreach (T childOfChild in FindVisualChildren<T>(child)) {
@@ -177,99 +304,24 @@ namespace FreshersDay {
 			Task.Factory.StartNew(action, CancellationToken.None, options, TaskScheduler.Default);
 		}
 
-		private void MainWindow_OnLoaded(object sender, RoutedEventArgs e) => InitEvents();
-
-		private ButtonInfo GetTaskInfo(Button clickedButton) {
-			foreach (ButtonInfo task in TaskConfig.TaskList) {
-				if (task.Button == clickedButton) {
-					return task;
+		private int GetAvailableTasksCount() {
+			int totalAvailableButtons = 0;
+			foreach (var bttn in FindVisualChildren<Button>(TasksGrid)) {
+				if (bttn.IsEnabled) {
+					totalAvailableButtons++;
 				}
 			}
 
-			return new ButtonInfo() {
-				Button = task1,
-				IsDisabled = false,
-				EventRegistered = false,
-				AudioFilePath = $"AudioFiles/{task1.Content}.wav",
-				IsGirlsOnly = false,
-				IsPunishmentTask = false,
-				IsBoysOnly = false,
-				TaskMessage = SelectRandomTask(),
-				TaskTitle = "Your task is..."
-			};
-		}
-
-		private async void Button_Click(object sender, RoutedEventArgs e) {
-			Button clickedButton = (Button) sender;
-			ClickedButtonCount++;
-
-			if (clickedButton == null) {
-				return;
+			foreach (var bttn in FindVisualChildren<Button>(PunishmentTasksGrid)) {
+				if (bttn.IsEnabled) {
+					totalAvailableButtons++;
+				}
 			}
 
-			if ((!string.IsNullOrEmpty(TaskConfig.TaskNotificationSoundPath) ||
-				 !string.IsNullOrWhiteSpace(TaskConfig.TaskNotificationSoundPath)) &&
-				File.Exists(TaskConfig.TaskNotificationSoundPath)) {
-				PlaySound(TaskConfig.TaskNotificationSoundPath, true);
-			}
-
-			clickedButton.Dispatcher.Invoke(() => {
-				clickedButton.Background = new SolidColorBrush(Colors.Gray);
-				clickedButton.IsEnabled = false;
-				clickedButton.Click -= Button_Click;
-			});
-
-			int remainingTasks = 48 - ClickedButtonCount;
-			CoreInvoke(() => { remainingLabel.Content = $"{remainingTasks}/48"; });
-
-			ButtonInfo buttonInfo = GetTaskInfo(clickedButton);
-
-			buttonInfo.IsDisabled = true;
-			buttonInfo.EventRegistered = false;
-
-			CoreInvoke(() => { lastTaskLabel.Content = buttonInfo.TaskMessage; });
-			PlaySound(buttonInfo.AudioFilePath);
-			Timer timer = ScheduleTask(() => { StimulateKeypress(VirtualKeyCode.ESCAPE); }, TimeSpan.FromMinutes(TaskConfig.TaskWindowCloseDelayInMinutes));
-			MessageDialogResult result = await ShowMessageDialog(buttonInfo.TaskTitle, buttonInfo.TaskMessage, MessageDialogStyle.Affirmative).ConfigureAwait(false);
-
-			switch (result) {
-				case MessageDialogResult.Affirmative:
-				case MessageDialogResult.Canceled: {
-						if (timer != null) {
-							timer.Dispose();
-						}
-
-						break;
-					}
-
-				default: {
-						if (timer != null) {
-							timer.Dispose();
-						}
-
-						break;
-					}
-			}
+			return totalAvailableButtons;
 		}
 
-		private void StimulateKeypress(VirtualKeyCode keyCode = VirtualKeyCode.ESCAPE) {
-			InputSimulator inputSim = new InputSimulator();
-			inputSim.Keyboard.KeyDown(VirtualKeyCode.ESCAPE);
-		}
-
-		private string SelectRandomTask() {
-			Random random = new Random();
-			int index = random.Next(TaskCollectionList.Count);
-			return TaskCollectionList[index];
-		}
-
-		public void CoreInvoke(Action action, Dispatcher dispatcher = null) {
-			if (dispatcher == null) {
-				dispatcher = Dispatcher;
-			}
-
-			dispatcher.Invoke(action);
-		}
+		private void StimulateKeypress(VirtualKeyCode keyCode = VirtualKeyCode.ESCAPE) => new InputSimulator().Keyboard.KeyDown(keyCode);
 
 		public async Task<MessageDialogResult> ShowMessageDialog(string title = "Your task is...", string message = "ERROR: Unknown task", MessageDialogStyle style = MessageDialogStyle.Affirmative) {
 			MessageDialogResult Result = MessageDialogResult.Affirmative;
@@ -288,72 +340,7 @@ namespace FreshersDay {
 			return Controller;
 		}
 
-		private void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
-
-		}
-
-		private void PunishmentButtonDoubleClick(object sender, MouseButtonEventArgs e) {
-			if (PunishmentButtonsList == null || PunishmentButtonsList.Count > 0) {
-				CoreInvoke(() => {
-					foreach (Button bttn in PunishmentButtonsList) {
-						if (!bttn.IsEnabled) {
-							bttn.IsEnabled = true;
-							ClickedButtonCount--;
-							int remainingTasks = 48 - ClickedButtonCount;
-							CoreInvoke(() => { remainingLabel.Content = $"{remainingTasks}/48"; });
-						}
-
-						foreach (ButtonInfo task in TaskConfig.TaskList) {
-							if (task.Button == bttn) {
-								if (!task.EventRegistered) {
-									bttn.Click += Button_Click;
-									task.EventRegistered = true;
-								}
-
-								if (task.IsDisabled) {
-									task.IsDisabled = false;
-								}
-
-								bttn.Background = task.IsPunishmentTask ? Brushes.Coral : task.IsGirlsOnly ?
-									Brushes.Pink : task.IsBoysOnly ? Brushes.DeepSkyBlue : Brushes.White;
-							}
-						}
-					}
-				});
-			}
-		}
-
-		private void TaskResetDoubleClick(object sender, MouseButtonEventArgs e) {
-			if (TaskButtonsList == null || TaskButtonsList.Count > 0) {
-				CoreInvoke(() => {
-					foreach (Button bttn in TaskButtonsList) {
-						if (!bttn.IsEnabled) {
-							bttn.IsEnabled = true;
-							ClickedButtonCount--;
-							int remainingTasks = 48 - ClickedButtonCount;
-							CoreInvoke(() => { remainingLabel.Content = $"{remainingTasks}/48"; });
-						}
-
-						foreach (ButtonInfo task in TaskConfig.TaskList) {
-							if (task.Button == bttn) {
-
-								if (!task.EventRegistered) {
-									bttn.Click += Button_Click;
-									task.EventRegistered = true;
-								}
-
-								if (task.IsDisabled) {
-									task.IsDisabled = false;
-								}
-
-								bttn.Background = task.IsPunishmentTask ? Brushes.Coral : task.IsGirlsOnly ?
-									Brushes.Pink : task.IsBoysOnly ? Brushes.DeepSkyBlue : Brushes.White;
-							}
-						}
-					}
-				});
-			}
-		}
+		
 
 		private void Button_Click_1(object sender, RoutedEventArgs e) {
 			SelectRandomAvailableTask();

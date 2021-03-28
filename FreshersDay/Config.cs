@@ -1,94 +1,116 @@
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Controls;
+using static FreshersDay.Config;
 
 namespace FreshersDay {
-	public class ButtonInfo {
-		[JsonProperty] public string ButtonName { get; set; } = "1";
-		[JsonIgnore] public Button Button { get; set; }
-		[JsonIgnore] public bool IsDisabled { get; set; } = false;
-		[JsonProperty] public string ButtonId { get; set; } = "task1";
-		[JsonIgnore] public bool EventRegistered { get; set; } = false;
-		[JsonProperty] public string TaskTitle { get; set; } = "Here is your task...";
-		[JsonProperty] public string TaskMessage { get; set; } = "വേപ്പില കഴിക്കുക";
-		[JsonProperty] public bool IsGirlsOnly { get; set; } = false;
-		[JsonProperty] public bool IsBoysOnly { get; set; } = false;
-		[JsonProperty] public bool IsPunishmentTask { get; set; } = false;
-		[JsonProperty] public string AudioFilePath { get; set; } = @"AudioFiles/1.wav";
+	public class TaskConfig {
+		[JsonIgnore]
+		public Button Button { get; set; }
+
+		[JsonIgnore]
+		public bool IsDisabled { get; set; } 
+
+		[JsonIgnore]
+		public bool EventRegistered { get; set; }
+
+		[JsonProperty]
+		public string TaskMessage { get; set; }
+
+		[JsonProperty]
+		public TaskType TaskType { get; set; }
+
+		[JsonProperty]
+		public string AudioFilePath { get; set; }
 	}
 
 	public class Config {
 		[JsonProperty]
-		public List<ButtonInfo> TaskList { get; set; } = new List<ButtonInfo>();
+		public List<TaskConfig> Tasks { get; set; }
 
-		[JsonProperty] public string TaskNotificationSoundPath { get; set; }
-		[JsonProperty] public int TaskWindowCloseDelayInMinutes { get; set; } = 2;
-		[JsonProperty] public int TaskAudioPlayDelayInSeconds { get; set; } = 3;
-		[JsonProperty] public string WindowTopTitle { get; set; }
+		[JsonProperty]
+		public string NotificationPath { get; set; }
 
-		public Config SaveConfig(Config config) {
-			JsonSerializer serializer = new JsonSerializer();
-			JsonConvert.SerializeObject(config, Formatting.Indented);
-			string pathName = @"Config.json";
-			using (StreamWriter sw = new StreamWriter(pathName, false)) {
-				using (JsonWriter writer = new JsonTextWriter(sw)) {
-					writer.Formatting = Formatting.Indented;
-					serializer.Serialize(writer, config);
-					sw.Dispose();
-					return config;
+		[JsonProperty]
+		public int WindowCloseDelayMinutes { get; set; } = 2;
+
+		[JsonProperty]
+		public int TaskAudioDelaySeconds { get; set; } = 3;
+
+		[JsonProperty]
+		public string WindowTitle { get; set; }
+
+		[JsonProperty]
+		public bool TextToSpeech { get; set; }
+
+		private const string ConfigPath = "config.json";
+
+		public async Task<bool> SaveConfig() {
+			try {
+				var json = JsonConvert.SerializeObject(this, Formatting.Indented);
+				using(FileStream stream = new FileStream(ConfigPath, FileMode.OpenOrCreate, FileAccess.Write)) {
+					using(StreamWriter writer = new StreamWriter(stream)) {						
+						await writer.WriteAsync(json);
+					}
 				}
+
+				return true;
+			}
+			catch {
+				return false;
+			}			
+		}
+
+		public async Task<bool> LoadConfig() {
+			if (!File.Exists(ConfigPath)) {
+				await GenerateDefaultConfig();
+			}
+
+			try {
+				string json;
+				using (FileStream stream = new FileStream(ConfigPath, FileMode.Open, FileAccess.Read)) {
+					using (StreamReader streamReader = new StreamReader(stream)) {
+						json = await streamReader.ReadToEndAsync();
+					}
+				}
+
+				var config = JsonConvert.DeserializeObject<Config>(json);
+				Tasks = config.Tasks;
+				NotificationPath = config.NotificationPath;
+				WindowCloseDelayMinutes = config.WindowCloseDelayMinutes;
+				TaskAudioDelaySeconds = config.TaskAudioDelaySeconds;
+				WindowTitle = config.WindowTitle;
+				return true;
+			}
+			catch {
+				return false;
 			}
 		}
 
-		public Config LoadConfig() {
-			if (!File.Exists(@"Config.json")) {
-				GenerateDefaultConfig();
-			}
-
-			string JSON;
-			using (FileStream Stream = new FileStream(@"Config.json", FileMode.Open, FileAccess.Read)) {
-				using (StreamReader ReadSettings = new StreamReader(Stream)) {
-					JSON = ReadSettings.ReadToEnd();
-				}
-			}
-
-			Config returnConfig = JsonConvert.DeserializeObject<Config>(JSON);
-			return returnConfig;
-		}
-
-		public bool GenerateDefaultConfig() {
-			if (File.Exists(@"Config.json")) {
+		public async Task<bool> GenerateDefaultConfig() {
+			if (File.Exists(ConfigPath)) {
 				return true;
 			}
 
-			Config Config = new Config();
-			int i = 1;
-
-			while (true) {
-				if (i >= 49) {
-					break;
-				}
-
-				Config.TaskList.Add(new ButtonInfo() {
-					ButtonName = i.ToString(),
-					ButtonId = $"task{i}",
-					AudioFilePath = $@"AudioFiles/{i}.wav",
-					IsGirlsOnly = i > 0 && i <= 18
+			for(int i = 0; i < 35; i++) {
+				Tasks.Add(new TaskConfig() {
+					AudioFilePath = "",
+					TaskMessage = "",
+					TaskType = i <= 18 ? TaskType.Girls : TaskType.Common
 				});
-				i++;
 			}
 
-			JsonSerializer serializer = new JsonSerializer();
-			JsonConvert.SerializeObject(Config, Formatting.Indented);
-			string pathName = @"Config.json";
-			using (StreamWriter sw = new StreamWriter(pathName, false))
-			using (JsonWriter writer = new JsonTextWriter(sw)) {
-				writer.Formatting = Formatting.Indented;
-				serializer.Serialize(writer, Config);
-				sw.Dispose();
-			}
-			return true;
+			WindowTitle = "BCA Freshers Day";
+			return await SaveConfig().ConfigureAwait(false);
+		}
+
+		public enum TaskType {
+			Girls,
+			Boys,
+			Punishment,
+			Common
 		}
 	}
 }
