@@ -40,12 +40,19 @@ namespace FreshersDay {
 
 				Dispatcher.Invoke(() => ProgramTitle.Content = Config.WindowTitle ?? "...");
 
+				Dispatcher.Invoke(() => {
+					if (!Config.EnablePunishmentTasks) {
+						PunishmentTasksGrid.IsEnabled = false;
+						PunishmentTasksGrid.Visibility = Visibility.Collapsed;
+					}
+				});				
+				
 				progressDialog.SetProgress(0.8);
 				await Task.Delay(100).ConfigureAwait(false);
 				progressDialog.SetMessage("Loading Task Buttons...");
 				Dispatcher.Invoke(InitTaskButtons);
 				await Task.Delay(130).ConfigureAwait(false);
-				Dispatcher.Invoke(() => RemainingTasksLabel.Content = $"{GetAvailableTasksCount()}/{Config.Tasks.Count}");
+				Dispatcher.Invoke(() => RemainingTasksLabel.Content = $"{GetAvailableTasksCount()}/{GetTotalTasksCount()}");
 				progressDialog.SetProgress(1);
 				await progressDialog.CloseAsync().ConfigureAwait(false);
 			};
@@ -120,7 +127,7 @@ namespace FreshersDay {
 			});
 
 			Dispatcher.Invoke(() => {
-				RemainingTasksLabel.Content = $"{GetAvailableTasksCount()}/{Config.Tasks.Count}";
+				RemainingTasksLabel.Content = $"{GetAvailableTasksCount()}/{GetTotalTasksCount()}";
 				PreviousTaskLabel.Content = taskConfig.TaskMessage;
 			});
 
@@ -170,7 +177,7 @@ namespace FreshersDay {
 				}
 			}
 
-			Dispatcher.Invoke(() => RemainingTasksLabel.Content = $"{GetAvailableTasksCount()}/{Config.Tasks.Count}");
+			Dispatcher.Invoke(() => RemainingTasksLabel.Content = $"{GetAvailableTasksCount()}/{GetTotalTasksCount()}");
 		}
 
 		private void PunishmentButtonDoubleClick(object sender, MouseButtonEventArgs e) => ResetTasks(Config.TaskType.Punishment);
@@ -319,6 +326,14 @@ namespace FreshersDay {
 			}
 
 			return totalAvailableButtons;
+		}
+
+		private int GetTotalTasksCount() {
+			if (!Config.EnablePunishmentTasks) {
+				return Config.Tasks.Count - 6;
+			}
+
+			return Config.Tasks.Count;
 		}
 
 		private void StimulateKeypress(VirtualKeyCode keyCode = VirtualKeyCode.ESCAPE) => new InputSimulator().Keyboard.KeyDown(keyCode);

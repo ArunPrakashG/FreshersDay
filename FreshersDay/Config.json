@@ -186,5 +186,6 @@
 		"WindowCloseDelayMinutes": 2,
 		"TaskAudioDelaySeconds": 3,
 		"TextToSpeech": true,
+		"EnablePunishmentTasks": false,
 		"WindowTitle": "BCA Freshers Day"
 }

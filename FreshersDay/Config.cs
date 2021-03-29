@@ -40,6 +40,9 @@ namespace FreshersDay {
 		public int TaskAudioDelaySeconds { get; set; } = 3;
 
 		[JsonProperty]
+		public bool EnablePunishmentTasks { get; set; }
+
+		[JsonProperty]
 		public string WindowTitle { get; set; }
 
 		[JsonProperty]
